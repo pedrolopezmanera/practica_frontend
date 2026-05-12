@@ -1,4 +1,15 @@
 <div class="login-container">
     <h2>Login</h2>
+    <div>
+    <form>
+        <label for="nickUsuario">Nick Usuario:</label>
+        <input type="text" id="nickUsuario" [(ngModel)]="nickUsuario" name="nickUsuario" required>
+
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" [(ngModel)]="contrasena" name="contrasena" required>
+    </form>
+    </div>
+
+    <button class="login-button" (click)="iniciarSesion()">Iniciar Sesión</button>
     <!-- @TODO: Implement login form here -->
 </div>

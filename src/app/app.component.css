@@ -3,14 +3,16 @@ html, body {
     margin: 0;
 }
 
-.nz-content {
-    text-align: center;      /* centra el texto horizontalmente */
-    margin-top: 40px;        /* ajusta este valor según lo alto que lo quieras */
+.app-header {
+    background-color: #1a9be8;
+    padding: 0.6em 1.5em;
+    box-shadow: 0 2px 6px rgba(0, 100, 180, 0.3);
 }
 
-h2 {
-    display: inline-block;
+.app-header h1 {
     margin: 0;
-    font-size: 36px;  /* tamaño de fuente grande */
-    color: red;
+    color: white;
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
