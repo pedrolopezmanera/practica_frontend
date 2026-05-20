@@ -1,13 +1,13 @@
 import {Usuario} from "./user.model";
 
 export interface Direccion {
-    id: number;
+    id: number|null;
 
     nombreCalle: string;
 
     numeroCalle: number;
 
-    usuario: Usuario;
+    usuario?: any;
 
     direccionPrincipal: boolean;
 }

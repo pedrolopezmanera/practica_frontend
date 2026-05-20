@@ -1,14 +1,84 @@
-
-<app-user-popup *ngIf="modoPopup !== 'CLOSED'"
-                (cerrarPopUpOk)="onCerrarPopUpOk()"
-                (cerrarPopUpCancel)="onCerrarPopUpCancel()"
-/>
+<app-user-popup *ngIf="modoPopup !== 'CLOSED' && modoPopup !== 'DELETE'" [estadoPopup]="estadoPopup"
+    [userId]="selectedUserId" (cerrarPopUpCancel)="onCerrarPopUpCancel()" (cerrarPopUpOk)="onCerrarPopUpOk()">
+</app-user-popup>
 
 <div class="user-list-container">
-    <h2>User List</h2>
-    <!-- @TODO: Implement user list display here -->
-    <div>
-        <button (click)="launchPopup()">Popup</button>
+    <h2>Lista de Usuarios</h2>
+    <div *ngIf="mensajeInfo" class="infoClass">{{ mensajeInfo }}</div>
+    <div *ngIf="mensajeError" class="errorClass" role="alert">{{ mensajeError }}</div>
+
+    <div class="container-button">
+        <button class="button main-button" (click)="launchPopupCreate()" aria-label="Crear usuario">Crear</button>
+        <button class="button main-button" (click)="launchPopupUpdate()" [disabled]="!selectedUserId" aria-label="Actualizar usuario">Actualizar</button>
+        <button class="button main-button-icon" (click)="lanzarPoupEliminar()" [disabled]="!selectedUserId" aria-label="Eliminar usuario">
+            <img src="assets/images/DeleteIcon.JPG" alt="Eliminar" class="img-icon" />
+        </button>
     </div>
 
+    <div class="table-container-overflow">
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Genero</th>
+                    <th>nickUsuario</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha de Creación</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Desayuno</th>
+                    <th>Puesto de Trabajo</th>
+                    <th>Direccion Principal</th>
+                    <th>Direcciones Extra</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="usuarios.length > 0; else noUsuarios">
+                <tr *ngFor="let usuario of usuarios; let id = index" class="table-column">
+                    <td>
+                        <input type="radio" name="selectedUser" [value]="usuario.id" [(ngModel)]="selectedUserId">
+                    </td>
+                    <td>
+                        <img *ngIf="usuario.generoId == 2" src="assets/images/Female.JPG" alt="{{usuario.genero?.nombre}}" class="img-gender">
+                        <img *ngIf="usuario.generoId == 1" src="assets/images/Male.JPG" alt="{{usuario.genero?.nombre}}" class="img-gender">
+                        <img *ngIf="!usuario.generoId" src="assets/images/Other.png" alt="Sin género" class="img-gender">
+                    </td>
+                    <td>{{usuario.nickUsuario || 'N/A'}}</td>
+                    <td>{{nombreCompleto(usuario)}}</td>
+                    <td>{{usuario.fechaHoraCreacion | date: 'EEE MMM dd yyyy HH:mm:ss' }}</td>
+                    <td>{{usuario.fechaNacimiento ? (usuario.fechaNacimiento | date: 'EEE MMM dd yyyy') : 'N/A'}}</td>
+                    <td>{{usuario.horaDesayuno | slice:0:5}}</td>
+                    <td>{{ usuario.puestoDeTrabajoNombre || '-' }}</td>
+                    <td [title]="getDireccionPrincipal(usuario)">
+                        {{ getDireccionPrincipal(usuario) }}
+                    </td>
+                    <td>
+                        {{ getDireccionesExtra(usuario) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ng-template #noUsuarios>
+            <tr>
+                <td colspan="10" style="text-align: center;">No hay usuarios disponibles.</td>
+            </tr>
+        </ng-template>
+    </div>
+</div>
+
+<div *ngIf="cargando" class="loading-indicator">Cargando usuarios...</div>
+
+<div class="dialog-overlay" *ngIf="modoPopup === 'DELETE'" (click)="cancelarEliminacion()"></div>
+
+<div class="dialog-box" *ngIf="modoPopup === 'DELETE'" role="dialog" aria-labelledby="dialog-title" style="max-width: 400px;">
+    <div class="dialog-header">
+        <h1 id="dialog-title">Eliminar Usuario</h1>
+    </div>
+
+    <div class="dialog-content text-center">
+        <p class="dialog-message">¿Estás seguro de que deseas eliminar el usuario seleccionado?</p>
+    </div>
+
+    <div class="dialog-footer">
+        <button type="button" class="btn btn-danger" (click)="confirmarEliminacion()">Sí</button>
+        <button type="button" class="btn default-btn" (click)="cancelarEliminacion()">Cancelar</button>
+    </div>
 </div>

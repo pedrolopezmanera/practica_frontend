@@ -1,30 +1,53 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {Router} from "@angular/router";
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Usuario } from 'src/app/core/models/user.model';
+import { UserService } from 'src/app/core/services/user.service';
 import { UserPopupComponent } from '../user-popup/user-popup.component';
+
+type UsuarioView = Usuario & {
+  generoId: number | null;
+  puestoDeTrabajoNombre: string | null;
+};
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
   standalone: true,
-  imports: [ CommonModule, UserPopupComponent ]
+  imports: [CommonModule, FormsModule, UserPopupComponent]
 })
 export class UserListComponent implements OnInit {
   @Output() cerrarPopUpOk = new EventEmitter<void>();
   @Output() cerrarPopUpCancel = new EventEmitter<void>();
 
-  modoPopup: String = 'CLOSED';
+  modoPopup: string = 'CLOSED';
+  estadoPopup: string = 'CREAR';
+  usuarios: UsuarioView[] = [];
+  selectedUserId: number | null = null;
+  cargando: boolean = false;
+  mensajeError: string = '';
+  mensajeInfo: string = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private userService: UserService) {
 
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (isLoggedIn !== 'true') {
+      await this.router.navigate(['/login']);
+      return;
+    }
+
+    await this.cargarUsuarios();
   }
 
   onCerrarPopUpOk() {
     this.modoPopup = 'CLOSED';
+    void this.cargarUsuarios();
   }
 
   onCerrarPopUpCancel() {
@@ -32,10 +55,123 @@ export class UserListComponent implements OnInit {
   }
   
   launchPopup() {
-    
+    this.launchPopupCreate();
+  }
+
+  launchPopupCreate() {
+    this.mensajeError = '';
+    this.mensajeInfo = '';
+    this.estadoPopup = 'CREAR';
+    this.selectedUserId = null;
     this.modoPopup = 'LAUNCH';
   }
 
-  // @TODO: Implementar propiedades, atributos, métodos... necesarios para el funcionamiento del listado de usuarios
+  launchPopupUpdate() {
+    if (!this.selectedUserId) {
+      return;
+    }
+
+    this.mensajeError = '';
+    this.mensajeInfo = '';
+    this.estadoPopup = 'ACTUALIZAR';
+    this.modoPopup = 'LAUNCH';
+  }
+
+  async eliminarUsuarioSeleccionado(): Promise<void> {
+    if (!this.selectedUserId) {
+      return;
+    }
+
+    const result = await this.userService.eliminarUsuario(this.selectedUserId);
+    if (!result.error) {
+      await this.cargarUsuarios();
+    }
+  }
+
+  lanzarPoupEliminar(): void {
+    this.modoPopup = 'DELETE';
+  }
+
+  cancelarEliminacion(): void {
+    this.modoPopup = 'CLOSED';
+  }
+
+  async confirmarEliminacion(): Promise<void> {
+    if (!this.selectedUserId) {
+      return;
+    }
+
+    try {
+      this.mensajeError = '';
+      this.mensajeInfo = '';
+      const response = await this.userService.eliminarUsuario(this.selectedUserId);
+      if (response.error) {
+        throw response.error;
+      }
+
+      this.modoPopup = 'CLOSED';
+      await this.cargarUsuarios();
+      this.mensajeInfo = 'Usuario eliminado correctamente.';
+    } catch (error) {
+      this.mensajeError = 'Error al eliminar el usuario.';
+      console.error('Error detallado:', error);
+    }
+  }
+
+  trackByUsuarioId(_: number, usuario: UsuarioView): number {
+    return usuario.id;
+  }
+
+  nombreCompleto(usuario: UsuarioView): string {
+    return [usuario.nombre, usuario.primerApellido, usuario.segundoApellido]
+      .filter((value) => !!value)
+      .join(' ');
+  }
+
+  getDireccionPrincipal(usuario: UsuarioView): string {
+    const principal = usuario.direcciones?.find((direccion) => direccion.direccionPrincipal);
+    if (!principal) {
+      return '-';
+    }
+
+    return `${principal.nombreCalle} ${principal.numeroCalle}`;
+  }
+
+  getDireccionesExtra(usuario: UsuarioView): string {
+    const extras = usuario.direcciones?.filter((direccion) => !direccion.direccionPrincipal) ?? [];
+    if (!extras.length) {
+      return '-';
+    }
+
+    return extras.map((direccion) => `${direccion.nombreCalle} ${direccion.numeroCalle}`).join(' | ');
+  }
+
+  private async cargarUsuarios(): Promise<void> {
+    this.cargando = true;
+    this.mensajeError = '';
+    const response = await this.userService.obtenerUsuarios();
+
+    if (!response.error && Array.isArray(response.data)) {
+      this.usuarios = this.normalizarUsuarios(response.data);
+      this.selectedUserId = this.usuarios[0]?.id ?? null;
+      this.cargando = false;
+      return;
+    }
+
+    this.usuarios = [];
+    this.selectedUserId = null;
+    if (response.error) {
+      this.mensajeError = 'No se pudieron cargar los usuarios.';
+    }
+    this.cargando = false;
+  }
+
+  private normalizarUsuarios(usuarios: Usuario[]): UsuarioView[] {
+    return usuarios.map((usuario) => ({
+      ...usuario,
+      generoId: usuario.genero?.id ?? (usuario as any).generoId ?? null,
+      puestoDeTrabajoNombre: usuario.puestoTrabajo?.nombre ?? null
+    }));
+  }
 
 }

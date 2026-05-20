@@ -1,11 +1,127 @@
-<!--<div class="dialog-overlay" (click)="onCancel()"></div>-->
-<div class="dialog-overlay"></div>
+<div class="dialog-overlay" (click)="onCancel()"></div>
+
 <div class="dialog-box">
-    <div class="dialog-title">
-        <h2>Pop Up</h2>
+    <div class="dialog-header">
+        <h1>{{ estadoPopup === 'CREAR' ? 'Crear Usuario' : 'Actualizar Usuario' }}</h1>
     </div>
 
-    <button (click)="onSave()">Aceptar</button>
-    <button (click)="onCancel()">Cancelar</button>
-    <!-- @TODO: Implementar el contenido del pop up, así como los botones de acción (ej. Cancelar, Aceptar) -->
+    <div class="dialog-content">
+        <form #userForm="ngForm">
+            <div *ngIf="mensajeError" class="errorClass" role="alert">{{ mensajeError }}</div>
+            <div *ngIf="mensajeInfo" class="infoClass">{{ mensajeInfo }}</div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Usuario</label>
+                    <input type="text" name="nickUsuario" [(ngModel)]="usuarioActual.nickUsuario" required>
+                </div>
+                <div class="form-column">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" [(ngModel)]="usuarioActual.contrasena" required>
+                </div>
+                <div class="form-column">
+                    <label>Fecha de Creacion</label>
+                    <input type="text" [value]="fechaCreacionFormateada" disabled class="input-disabled">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" [(ngModel)]="usuarioActual.nombre" required>
+                </div>
+                <div class="form-column">
+                    <label>Primer Apellido</label>
+                    <input type="text" name="primerApellido" [(ngModel)]="usuarioActual.primerApellido" required>
+                </div>
+                <div class="form-column">
+                    <label>Segundo Apellido</label>
+                    <input type="text" name="segundoApellido" [(ngModel)]="usuarioActual.segundoApellido">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" name="fechaNacimiento" [(ngModel)]="usuarioActual.fechaNacimiento" required>
+                </div>
+                <div class="form-column">
+                    <label>Genero</label>
+                    <select name="genero" [(ngModel)]="usuarioActual.genero.id" required>
+                        <option [ngValue]="null" disabled>Selecciona Genero</option>
+                        <option *ngFor="let g of generosDisponibles" [value]="g.id">{{ g.nombre }}</option>
+                    </select>
+                </div>
+
+                <div class="form-column">
+                    <label>Puesto de Trabajo</label>
+                    <select name="puesto" [(ngModel)]="usuarioActual.puestoTrabajo.id" required>
+                        <option [ngValue]="null" disabled>Selecciona Puesto de Trabajo</option>
+                        <option *ngFor="let p of puestosDisponibles" [value]="p.id">{{ p.nombre }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column breakfast-column">
+                    <label>Hora del Desayuno</label>
+                    <input type="time" name="horaDesayuno" [(ngModel)]="usuarioActual.horaDesayuno" required>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="addresses-section">
+                <h3>Direcciones</h3>
+                <div class="container-button">
+                    <button type="button" class="button main-button" (click)="crearDireccionVacia()">Crear</button>
+                    <button type="button" class="button main-button" (click)="indiceDireccionEditando === direccionSeleccionadaIndex ? guardarDireccionEditada() : actualizarDireccion()" [disabled]="direccionSeleccionadaIndex === -1">
+                        {{ indiceDireccionEditando === direccionSeleccionadaIndex ? 'Guardar' : 'Actualizar' }}
+                    </button>
+                    <button type="button" class="button main-button-icon" (click)="eliminarDireccion()" [disabled]="direccionSeleccionadaIndex === -1">
+                        <img src="assets/images/DeleteIcon.JPG" class="img-icon" alt="Delete" />
+                    </button>
+                </div>
+
+                <div class="table-container-overflow addresses-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="th-small">Seleccionar</th>
+                                <th class="th-small">Principal</th>
+                                <th>Nombre de la calle</th>
+                                <th class="th-number">Numero</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dir of usuarioActual.direcciones; let i = index">
+                                <td>
+                                    <input type="radio" name="selectedAddressRow" [value]="i" [(ngModel)]="direccionSeleccionadaIndex">
+                                </td>
+
+                                <td>
+                                    <input type="radio" name="mainAddressGroup" [checked]="dir.direccionPrincipal" (change)="marcarComoPrincipal(i)">
+                                </td>
+
+                                <td>
+                                    <span *ngIf="indiceDireccionEditando !== i">{{ dir.nombreCalle || '-' }}</span>
+                                    <input *ngIf="indiceDireccionEditando === i" type="text" [(ngModel)]="dir.nombreCalle" name="calle_{{ i }}" class="inline-input">
+                                </td>
+
+                                <td>
+                                    <span *ngIf="indiceDireccionEditando !== i">{{ dir.numeroCalle || '-' }}</span>
+                                    <input *ngIf="indiceDireccionEditando === i" type="number" [(ngModel)]="dir.numeroCalle" name="num_{{ i }}" class="inline-input">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button" class="popup-button popup-button-secondary" (click)="onCancel()">Cancelar</button>
+                <button type="button" class="popup-button" [disabled]="userForm.invalid" (click)="onSave()">Aceptar</button>
+            </div>
+        </form>
+    </div>
 </div>

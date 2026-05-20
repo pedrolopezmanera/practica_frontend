@@ -17,10 +17,111 @@
     z-index: 1000;
     border-radius: 8px;
     min-width: 500px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow: auto;
+}
+
+.dialog-header h1 {
+    margin: 0 0 1rem 0;
+    color: #1a6fa8;
+    font-size: 1.5rem;
+}
+
+.dialog-content {
+    width: 100%;
+}
+
+.breakfast-column {
+    max-width: 150px;
+}
+
+.input-disabled {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e3e3e3;
+    margin: 1rem 0;
+}
+
+.addresses-section h3 {
+    margin: 0 0 .6rem 0;
+    color: #1a6fa8;
+}
+
+.table-container-overflow {
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+}
+
+.addresses-table-container {
+    margin-top: .6rem;
+}
+
+.th-small {
+    width: 50px;
+}
+
+.th-number {
+    width: 80px;
+}
+
+.inline-input {
+    width: 100%;
+}
+
+/* PIE DEL POPUP */
+.dialog-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.popup-button {
+    height: 40px;
+    padding: .4rem .9rem;
+    border: none;
+    background-color: #1a9be8;
+    cursor: pointer;
+    border-radius: .2rem;
+    color: #fff;
+}
+
+.popup-button:hover {
+    background-color: #1480c8;
+}
+
+.popup-button:active {
+    background-color: #0f60a0;
+}
+
+.popup-button-secondary {
+    background-color: #fefefe;
+    color: #000;
+    border: 1px solid #e5e5e5;
+}
+
+.popup-button-secondary:hover {
+    background-color: #f6f6f6;
 }
 .errorClass {
     color: red;
     margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.infoClass {
+    color: #1a6fa8;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
 }
 
 body {
@@ -42,7 +143,7 @@ table, th, tr, td {
 
 th {
     text-align: center;
-    background-color: #e51400;
+    background-color: #1a9be8;
     font-weight: 600;
     color: #fff;
     padding: .3rem;
@@ -54,7 +155,7 @@ td {
     padding: .3rem;
 }
 
-tr:nth-child(even) {background-color: #f7cecc;}
+tr:nth-child(even) {background-color: #f3faff;}
 
 .container-button {
     display: flex; /* alinear horizontalmente */
@@ -135,4 +236,8 @@ input,textarea, select {
     border-radius: 4px;
     border: 1px solid #dddddd;
     background-color: #fff;
+}
+
+input[type="radio"] {
+    width: auto;
 }

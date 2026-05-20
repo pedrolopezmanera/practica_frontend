@@ -1,15 +1,27 @@
 <div class="login-container">
-    <h2>Login</h2>
-    <div>
-    <form>
-        <label for="nickUsuario">Nick Usuario:</label>
-        <input type="text" id="nickUsuario" [(ngModel)]="nickUsuario" name="nickUsuario" required>
+<div class="login-card">
+    <h2>Bienvenido</h2>
+    <p class="login-subtitle">Introduce tus credenciales de acceso</p>
 
+    <form #loginForm="ngForm" (ngSubmit)="iniciarSesion()">
+        <div class="form-group">
+        <label for="nickUsuario">Usuario:</label>
+        <input type="text" id="nickUsuario" [(ngModel)]="nickUsuario" name="nickUsuario" placeholder="Introduce tu usuario" required>
+        </div>
+
+
+        <div class="form-group">
         <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" [(ngModel)]="contrasena" name="contrasena" required>
-    </form>
-    </div>
+        <input type="password" id="contrasena" [(ngModel)]="contrasena" name="contrasena" placeholder="Introduce tu contraseña" required>
 
-    <button class="login-button" (click)="iniciarSesion()">Iniciar Sesión</button>
-    <!-- @TODO: Implement login form here -->
+  </div>
+
+ <div *ngIf="mensajeError" class="error-box">
+            {{ mensajeError}}
+        </div>
+        
+        <button type="submit" class="login-button" [disabled]="loginForm.invalid">Iniciar Sesión</button>
+
+    </form>
+</div>
 </div>

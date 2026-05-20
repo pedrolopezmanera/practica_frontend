@@ -20,33 +20,68 @@
 
 .login-container h2 {
   color: #1a6fa8;
-  margin-bottom: 1.5em;
-  font-size: 1.6em;
+  margin-bottom: 0.5em;
+  font-size: 1.7em;
   letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.login-card h2 {
+  color: #1a6fa8;
+  margin-bottom: 0.5em;
+  font-size: 1.7em;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  color: #4a90b8;
+  font-size: 1.05em;
+  margin-bottom: 1.5em;
+  font-weight: 400;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.8em;
+  gap: 1.5em;
   text-align: left;
+  align-items: center;
 }
 
 form label {
-  font-size: 0.85em;
-  color: #4a90b8;
+  font-size: 0.95em;
+  color: #1a6fa8;
   font-weight: 600;
-  margin-bottom: 0.2em;
+  margin-bottom: 0.4em;
+  text-align: center;
 }
 
-form input {
+.form-group {
+  background: #f6fbff;
+  border: 1px solid #d0e6f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(26, 111, 168, 0.04);
+  padding: 1.1em 1.2em 0.7em 1.2em;
+  margin-bottom: 0.7em;
+  width: 100%;
+  max-width: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group input {
   padding: 0.6em 0.8em;
   border: 1px solid #90c8e8;
   border-radius: 6px;
-  font-size: 0.95em;
+  font-size: 1em;
   outline: none;
   transition: border-color 0.2s;
   color: #333;
+  width: 100%;
+  background: #fff;
+  box-sizing: border-box;
 }
 
 form input:focus {

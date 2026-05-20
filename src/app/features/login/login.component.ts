@@ -1,8 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
-import ConstLocalStorage from 'src/app/shared/contants/const-local-storage';
 
 
 @Component({
@@ -11,32 +11,30 @@ import ConstLocalStorage from 'src/app/shared/contants/const-local-storage';
   styleUrls: ['./login.component.css'],
   standalone: true,
   imports: [
-     FormsModule
+    FormsModule,
+    CommonModule
   ]
 })
 export class LoginComponent {
 
-  LoginService: LoginService;
   nickUsuario: string = '';
   contrasena: string = '';
+  mensajeError: string = '';
 
   constructor(private router: Router, private loginService: LoginService) {
-    this.LoginService = loginService;
-
   }
 
   public async iniciarSesion() {
-    console.log('Pulsado botón Iniciar sesión');
-    let result = await this.LoginService.iniciarSesion(this.nickUsuario, this.contrasena);
-    if(result === true){
-      console.log('Inicio de sesión exitoso');
+    this.mensajeError = '';
+
+    const result = await this.loginService.iniciarSesion(this.nickUsuario, this.contrasena);
+
+    if (result.data === true && !result.error) {
+      localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('nickUsuario', this.nickUsuario);
-      localStorage.setItem('contrasena', this.contrasena);
       this.router.navigate(['/usuarios']);
+    } else {
+      this.mensajeError = 'Usuario o contraseña incorrectos.';
     }
-    else{
-      alert('Credenciales incorrectas');
-    }
-  console.log('Resultado del inicio de sesión:', result);
   }
 }

@@ -1,5 +1,5 @@
 .user-list-container {
-  max-width: 600px;
+  max-width: 95%;
   margin: 30px auto;
 }
 .dialog-overlay {
@@ -21,9 +21,15 @@
   z-index: 1000;
   border-radius: 8px;
   min-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .errorClass {
   color: red;
+  margin-top: 1em;
+}
+
+.infoClass {
+  color: #1a6fa8;
   margin-top: 1em;
 }
 
@@ -33,32 +39,34 @@ body {
   background-color: #fff;
 }
 
-
-
-table {
-  width: 100%;
+button:focus, input:focus, textarea:focus, select:focus {
+  outline: 2px solid #3c8bcb;
+  outline-offset: 2px;
 }
 
-table, th, tr, td {
-  border-collapse: collapse;
-  border: 1px solid #ad6f72;
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9rem;
+  }
+  th, td {
+    padding: 0.2rem;
+  }
+
+  .main-button, .main-button-icon {
+    width: 100%;
+    padding: 0.6rem;
+  }
 }
 
-th {
-  text-align: center;
-  background-color: #e51400;
-  font-weight: 600;
-  color: #fff;
-  padding: .3rem;
+button, .form-control, .btn {
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-td {
-  text-align: center;
-  color: #000;
-  padding: .3rem;
+tr:hover {
+  background-color: #ffe5e5;
 }
 
-tr:nth-child(even) {background-color: #f7cecc;}
+tr:nth-child(even) {background-color: #f3faff;}
 
 .container-button {
   display: flex; /* alinear horizontalmente */
@@ -71,14 +79,24 @@ tr:nth-child(even) {background-color: #f7cecc;}
   height: 40px;
   padding: .4rem .6rem;
   border: none;
-  background-color: #3c8bcb;
+  background-color: #1a9be8;
   cursor: pointer;
   border-radius: .2rem;
   color: #fff;
 }
 
+.main-button:hover,
+.main-button-icon:hover {
+  background-color: #1480c8;
+}
+
+.main-button:active,
+.main-button-icon:active {
+  background-color: #0f60a0;
+}
+
 .default-btn {
-  background-color: #fefefe;
+  background-color: #d6d8db;
   color: #000;
   border: 1px solid #e5e5e5;
 }
@@ -98,6 +116,7 @@ tr:nth-child(even) {background-color: #f7cecc;}
   flex-wrap: wrap;
   gap: 15px;
   padding-bottom: .5rem;
+  margin-bottom: 1rem;
 }
 
 .form-column {
@@ -143,4 +162,33 @@ input,textarea, select {
 
 .img-gender {
   max-height: 25px;
+}
+
+.table-container-overflow {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .dialog-box {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+body.dark-mode table {
+  border-color: #333;
+}
+
+body.dark-mode th {
+  background-color: #333;
+}
+
+body.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
 }
