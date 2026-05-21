@@ -1,4 +1,5 @@
 <div class="app-header">
-    <h1>Usuarios App</h1>
+    <h1>Registro de Usuarios</h1>
+    <button *ngIf="mostrarSalir" class="logout-button" type="button" (click)="cerrarSesion()">Salir</button>
 </div>
 <router-outlet></router-outlet>

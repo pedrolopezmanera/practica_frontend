@@ -3,11 +3,13 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Usuario } from 'src/app/core/models/user.model';
+import { PuestoDeTrabajo } from 'src/app/core/models/puestodetrabajo.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { UserPopupComponent } from '../user-popup/user-popup.component';
 
 type UsuarioView = Usuario & {
   generoId: number | null;
+  puestoDeTrabajoId: number | null;
   puestoDeTrabajoNombre: string | null;
 };
 
@@ -25,6 +27,7 @@ export class UserListComponent implements OnInit {
   modoPopup: string = 'CLOSED';
   estadoPopup: string = 'CREAR';
   usuarios: UsuarioView[] = [];
+  puestosDeTrabajo: PuestoDeTrabajo[] = [];
   selectedUserId: number | null = null;
   cargando: boolean = false;
   mensajeError: string = '';
@@ -42,6 +45,7 @@ export class UserListComponent implements OnInit {
       return;
     }
 
+    await this.cargarPuestosDeTrabajo();
     await this.cargarUsuarios();
   }
 
@@ -166,11 +170,26 @@ export class UserListComponent implements OnInit {
     this.cargando = false;
   }
 
+  private async cargarPuestosDeTrabajo(): Promise<void> {
+    const response = await this.userService.obtenerPuestosDeTrabajo();
+
+    if (!response.error && Array.isArray(response.data)) {
+      this.puestosDeTrabajo = response.data;
+      return;
+    }
+
+    this.puestosDeTrabajo = [];
+  }
+
   private normalizarUsuarios(usuarios: Usuario[]): UsuarioView[] {
     return usuarios.map((usuario) => ({
       ...usuario,
       generoId: usuario.genero?.id ?? (usuario as any).generoId ?? null,
-      puestoDeTrabajoNombre: usuario.puestoTrabajo?.nombre ?? null
+      puestoDeTrabajoId: usuario.puestoTrabajo?.id ?? (usuario as any).puestoDeTrabajoId ?? null,
+      puestoDeTrabajoNombre:
+        usuario.puestoTrabajo?.nombre ??
+        this.puestosDeTrabajo.find((puesto) => puesto.id === ((usuario as any).puestoDeTrabajoId ?? null))?.nombre ??
+        null
     }));
   }
 
